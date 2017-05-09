@@ -25,18 +25,29 @@ function drawMap(map,ctx){
   }
 }
 
+
+
 function updateAgent(agent,modifier,map,otherLocs){
-  if (38 in keysDown) {agent.y -= agent.speed * modifier;}//up
-  if (40 in keysDown) {agent.y += agent.speed * modifier;}//down
-  if (37 in keysDown) {agent.x -= agent.speed * modifier;}//left
-  if (39 in keysDown) {agent.x += agent.speed * modifier;}//right
+  var dy = 0;
+  var dx = 0;
+  if (38 in keysDown) {dy -= agent.speed * modifier;}//up
+  if (40 in keysDown) {dy += agent.speed * modifier;}//down
+  if (37 in keysDown) {dx -= agent.speed * modifier;}//left
+  if (39 in keysDown) {dx += agent.speed * modifier;}//right
   //console.log(map[Math.floor(agent.x+0)][Math.floor(agent.y+0)]);
-  var tmpx = Math.floor(agent.x);
-  var tmpy = Math.floor(agent.y);
-  if(map[tmpy+0][tmpx+0]+map[tmpy+0][tmpx+1]>0){ agent.y = tmpy+1;}
-  if(map[tmpy+1][tmpx+0]+map[tmpy+1][tmpx+1]>0){ agent.y = tmpy;}
-  if(map[tmpy+0][tmpx+0]+map[tmpy+1][tmpx+0]>0){ agent.x = tmpx+1;}
-  if(map[tmpy+0][tmpx+1]+map[tmpy+1][tmpx+1]>0){ agent.x = tmpx;}
+  var tmpx = Math.floor(agent.x+dx);
+  var tmpy = Math.floor(agent.y+dy);
+  var collide = (map[tmpy+0][tmpx+0] != 0) ||
+                (map[tmpy+0][tmpx+1] != 0) ||
+                (map[tmpy+1][tmpx+0] != 0) ||
+                (map[tmpy+1][tmpx+1] != 0) || 
+                (tmpy >= map.length) ||
+                (tmpx >= map[0].length) ||
+                (tmpx < 0) || (tmpy <0);
+  if(!collide){
+    agent.x += dx;
+    agent.y += dy;
+  }
   return agent;
 }
 
@@ -50,8 +61,10 @@ function drawAgent(agent,ctx,map){
 
 function main(){
   var canvas = document.createElement("canvas");
+  canvas.width = w.innerWidth-100;
+  canvas.height = w.innerHeight-100;
   var ctx = canvas.getContext("2d");
-  var agent = {"x":4.5,"y":3.790432,"speed":2};
+  var agent = {"x":4.5,"y":3.790432,"speed":4};
   var map = [
     [1,1,1,1,1,1,1,1,1,1,1,1],
     [1,0,0,0,0,0,0,0,0,0,1,1],
